@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Time For Money",
+  "version": "1.0.0",
+  "description": "Convert Amazon product prices into hours of work based on your hourly wage",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.amazon.com/*",
+    "https://amazon.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.amazon.com/*",
+        "https://amazon.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Time For Money"
+  }
+}
+
