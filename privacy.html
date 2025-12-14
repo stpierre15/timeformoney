@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifePrice Privacy Policy</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #9CAF88;
+            border-bottom: 2px solid #9CAF88;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #7A9770;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #555;
+        }
+        strong {
+            color: #7A9770;
+        }
+        ul {
+            margin: 10px 0;
+        }
+        li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>LifePrice Privacy Policy</h1>
+
+    <p><strong>Last Updated:</strong> January 2025</p>
+
+    <h2>Introduction</h2>
+    <p>LifePrice ("we", "our", or "the extension") is committed to protecting your privacy. This Privacy Policy explains how we handle information when you use the LifePrice Chrome extension.</p>
+
+    <h2>Information We Collect</h2>
+    <p>LifePrice collects <strong>minimal information</strong> necessary for functionality:</p>
+
+    <h3>Stored Data</h3>
+    <ul>
+        <li><strong>Hourly Wage</strong>: The only data stored is your hourly wage, which you voluntarily enter in the extension popup.</li>
+        <li><strong>Storage Location</strong>: Your hourly wage is stored locally in Chrome's sync storage (<code>chrome.storage.sync</code>), which syncs across your Chrome devices.</li>
+    </ul>
+
+    <h3>What We DON'T Collect</h3>
+    <ul>
+        <li>We do <strong>NOT</strong> collect any personal information</li>
+        <li>We do <strong>NOT</strong> track your browsing history</li>
+        <li>We do <strong>NOT</strong> track your Amazon purchases or product views</li>
+        <li>We do <strong>NOT</strong> collect any analytics data</li>
+        <li>We do <strong>NOT</strong> use cookies or tracking pixels</li>
+        <li>We do <strong>NOT</strong> transmit any data to external servers</li>
+    </ul>
+
+    <h2>How We Use Information</h2>
+    <p>Your hourly wage is used <strong>solely</strong> to calculate and display time-to-price conversions on Amazon product pages. This calculation happens entirely on your device—no data leaves your browser.</p>
+
+    <h2>Data Storage and Sync</h2>
+    <p>Your hourly wage is stored using Chrome's <code>chrome.storage.sync</code> API, which:</p>
+    <ul>
+        <li>Stores data locally on your device</li>
+        <li>Optionally syncs across your Chrome devices (if you have Chrome Sync enabled)</li>
+        <li>Is encrypted in transit by Chrome</li>
+        <li>Can be cleared at any time through Chrome's extension settings</li>
+    </ul>
+
+    <h2>Third-Party Services</h2>
+    <p>LifePrice does <strong>NOT</strong> use any third-party services, analytics tools, or external APIs except:</p>
+    <ul>
+        <li><strong>Google Fonts</strong>: Used only to load the Inter font family in the extension popup (no data collection)</li>
+        <li><strong>Chrome APIs</strong>: Standard Chrome extension APIs for storage and content scripts</li>
+    </ul>
+
+    <h2>Permissions Explanation</h2>
+    <p>LifePrice requires the following permissions:</p>
+
+    <h3>Storage Permission</h3>
+    <ul>
+        <li><strong>Purpose</strong>: To save your hourly wage preference</li>
+        <li><strong>Data</strong>: Only your hourly wage value</li>
+        <li><strong>Scope</strong>: Local Chrome storage only</li>
+    </ul>
+
+    <h3>Host Permissions (Amazon.com)</h3>
+    <ul>
+        <li><strong>Purpose</strong>: To run content scripts on Amazon product pages to convert prices</li>
+        <li><strong>Scope</strong>: Only active on <code>amazon.com</code> domains</li>
+        <li><strong>Data Access</strong>: Only reads price information already visible on the page</li>
+        <li><strong>No Transmission</strong>: Price data is never sent anywhere—only converted for display</li>
+    </ul>
+
+    <h2>Your Rights</h2>
+    <p>You have full control over your data:</p>
+    <ul>
+        <li><strong>View</strong>: Check your stored wage in the extension popup</li>
+        <li><strong>Modify</strong>: Change your wage at any time</li>
+        <li><strong>Delete</strong>: Clear extension data through Chrome's extension settings</li>
+        <li><strong>Uninstall</strong>: Remove the extension at any time, which deletes all stored data</li>
+    </ul>
+
+    <h2>Data Security</h2>
+    <ul>
+        <li>All data storage uses Chrome's built-in secure storage APIs</li>
+        <li>No data is transmitted over the network</li>
+        <li>No external servers are involved</li>
+        <li>All processing happens locally in your browser</li>
+    </ul>
+
+    <h2>Children's Privacy</h2>
+    <p>LifePrice does not knowingly collect information from children under 13. If you are under 13, please do not use this extension.</p>
+
+    <h2>Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated revision date.</p>
+
+    <h2>Contact</h2>
+    <p>If you have questions about this Privacy Policy, please contact us through the Chrome Web Store listing or via GitHub (if applicable).</p>
+
+    <h2>Compliance</h2>
+    <p>LifePrice complies with:</p>
+    <ul>
+        <li>General Data Protection Regulation (GDPR)</li>
+        <li>California Consumer Privacy Act (CCPA)</li>
+        <li>Chrome Web Store Developer Program Policies</li>
+    </ul>
+
+    <hr>
+    <p><strong>Summary</strong>: LifePrice stores only your hourly wage locally. No personal data is collected, tracked, or transmitted. All processing happens on your device.</p>
+</body>
+</html>
