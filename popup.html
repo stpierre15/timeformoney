@@ -3,20 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Time For Money</title>
+  <title>LifePrice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      width: 300px;
-      padding: 20px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      width: 320px;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       margin: 0;
     }
     
-    h1 {
-      font-size: 20px;
-      margin: 0 0 20px 0;
-      color: #232f3e;
+    .header {
+      background: linear-gradient(135deg, #9CAF88 0%, #7A9770 100%);
+      color: white;
+      padding: 20px;
       text-align: center;
+    }
+    
+    h1 {
+      font-size: 22px;
+      margin: 0;
+      font-weight: 600;
+    }
+    
+    .content {
+      padding: 20px;
+    }
+    
+    .current-wage {
+      background-color: #f8f9fa;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .current-wage-label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+    
+    .current-wage-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #232f3e;
     }
     
     .input-group {
@@ -25,52 +60,113 @@
     
     label {
       display: block;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
       font-size: 14px;
-      color: #555;
-      font-weight: 500;
+      color: #333;
+      font-weight: 600;
     }
     
     input[type="number"] {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       border: 2px solid #ddd;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 16px;
       box-sizing: border-box;
-      transition: border-color 0.3s;
+      transition: all 0.3s;
     }
     
     input[type="number"]:focus {
       outline: none;
-      border-color: #ff9900;
+      border-color: #9CAF88;
+      box-shadow: 0 0 0 3px rgba(156, 175, 136, 0.1);
+    }
+    
+    .presets {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    
+    .preset-btn {
+      padding: 8px 12px;
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .preset-btn:hover {
+      background-color: #9CAF88;
+      color: white;
+      border-color: #9CAF88;
     }
     
     button {
       width: 100%;
       padding: 12px;
-      background-color: #ff9900;
+      background-color: #9CAF88;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.3s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     
     button:hover {
-      background-color: #e88800;
+      background-color: #7A9770;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
     
     button:active {
-      background-color: #d77700;
+      transform: translateY(1px);
+    }
+    
+    .examples {
+      margin-top: 20px;
+      padding: 15px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 8px;
+      font-size: 13px;
+    }
+    
+    .examples-title {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #232f3e;
+    }
+    
+    .example-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid #dee2e6;
+    }
+    
+    .example-item:last-child {
+      border-bottom: none;
+    }
+    
+    .example-price {
+      color: #666;
+    }
+    
+    .example-hours {
+      font-weight: 600;
+      color: #9CAF88;
     }
     
     .status {
       margin-top: 15px;
-      padding: 10px;
-      border-radius: 4px;
+      padding: 12px;
+      border-radius: 6px;
       font-size: 14px;
       text-align: center;
       display: none;
@@ -92,36 +188,64 @@
     
     .info {
       margin-top: 15px;
-      padding: 10px;
-      background-color: #f0f0f0;
-      border-radius: 4px;
+      padding: 12px;
+      background-color: #e7f3ff;
+      border-radius: 6px;
       font-size: 12px;
-      color: #666;
+      color: #0066cc;
       line-height: 1.5;
+      border-left: 3px solid #0066cc;
+    }
+    
+    .info strong {
+      display: block;
+      margin-bottom: 5px;
     }
   </style>
 </head>
 <body>
-  <h1>⏰ Time For Money</h1>
-  
-  <div class="input-group">
-    <label for="hourlyWage">Hourly Wage ($)</label>
-    <input 
-      type="number" 
-      id="hourlyWage" 
-      min="0" 
-      step="0.01" 
-      placeholder="Enter your hourly wage"
-    >
+  <div class="header">
+    <h1>LifePrice</h1>
   </div>
   
-  <button id="saveBtn">Save Wage</button>
-  
-  <div id="status" class="status"></div>
-  
-  <div class="info">
-    <strong>How it works:</strong><br>
-    Set your hourly wage above, then visit any Amazon product page. The extension will automatically convert prices into hours of work.
+  <div class="content">
+    <div class="current-wage" id="currentWageDisplay" style="display: none;">
+      <div class="current-wage-label">Current Wage</div>
+      <div class="current-wage-value" id="currentWageValue">$0.00/hr</div>
+    </div>
+    
+    <div class="input-group">
+      <label for="hourlyWage">Set Your Hourly Wage</label>
+      <input 
+        type="number" 
+        id="hourlyWage" 
+        min="0" 
+        step="0.01" 
+        placeholder="e.g., 25.00"
+      >
+      <div class="presets">
+        <button class="preset-btn" data-wage="15">$15/hr</button>
+        <button class="preset-btn" data-wage="20">$20/hr</button>
+        <button class="preset-btn" data-wage="25">$25/hr</button>
+        <button class="preset-btn" data-wage="30">$30/hr</button>
+        <button class="preset-btn" data-wage="40">$40/hr</button>
+        <button class="preset-btn" data-wage="50">$50/hr</button>
+      </div>
+    </div>
+    
+    <button id="saveBtn">Save Wage</button>
+    
+    <div id="status" class="status"></div>
+    
+    <div class="examples" id="examples" style="display: none;">
+      <div class="examples-title">📊 Example Conversions</div>
+      <div id="examplesList"></div>
+    </div>
+    
+    <div class="info">
+      <strong>💡 How it works:</strong>
+      Set your hourly wage above, then visit any Amazon product page. Prices will automatically convert to hours of work.
+    </div>
   </div>
   
   <script src="popup.js"></script>

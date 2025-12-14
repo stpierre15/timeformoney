@@ -1,4 +1,4 @@
-// Time For Money - Content Script
+// LifePrice - Content Script
 (function() {
   'use strict';
 
@@ -33,6 +33,22 @@
     return hours.toFixed(2);
   }
 
+  // Format hours text with days/hours breakdown for better readability
+  function formatHoursText(hours) {
+    const hoursNum = parseFloat(hours);
+    const days = Math.floor(hoursNum / 8);
+    const remainingHours = (hoursNum % 8).toFixed(1);
+    
+    if (days > 0) {
+      if (remainingHours > 0) {
+        return `${days} day${days > 1 ? 's' : ''} ${remainingHours} hour${remainingHours !== '1.0' ? 's' : ''}`;
+      } else {
+        return `${days} day${days > 1 ? 's' : ''}`;
+      }
+    }
+    return `${hours} hour${hoursNum !== 1 ? 's' : ''}`;
+  }
+
   // Extract price from text
   function extractPrice(text) {
     // Remove currency symbols and commas, extract number
@@ -41,30 +57,128 @@
     return isNaN(price) ? null : price;
   }
 
+  // Extract full price from Amazon's structured price format
+  function extractPriceFromStructured(element) {
+    const parent = element.closest('.a-price');
+    if (parent) {
+      // First, check if there's an .a-offscreen element with the full price
+      const offscreenElement = parent.querySelector('.a-offscreen');
+      if (offscreenElement) {
+        const offscreenText = offscreenElement.textContent.trim();
+        const offscreenPrice = extractPrice(offscreenText);
+        if (offscreenPrice && offscreenPrice > 0) {
+          return offscreenPrice;
+        }
+      }
+      
+      // Otherwise, combine whole and fraction parts
+      const wholePart = parent.querySelector('.a-price-whole');
+      const fractionPart = parent.querySelector('.a-price-fraction');
+      
+      if (wholePart) {
+        const wholeText = wholePart.textContent.trim().replace(/,/g, '');
+        const whole = parseFloat(wholeText);
+        
+        if (!isNaN(whole)) {
+          if (fractionPart) {
+            const fractionText = fractionPart.textContent.trim();
+            const fraction = parseFloat(fractionText);
+            if (!isNaN(fraction)) {
+              // Combine whole and fraction: 529 + 0.99 = 529.99
+              return whole + (fraction / 100);
+            }
+          }
+          return whole;
+        }
+      }
+    }
+    
+    // Fallback to regular extraction
+    const text = element.textContent || element.innerText || '';
+    return extractPrice(text);
+  }
+
   // Convert prices on the page
   function convertPrices() {
     if (!hourlyWage || hourlyWage <= 0) return;
 
-    // Amazon price selectors (multiple possible locations)
-    const priceSelectors = [
+    // First, find all .a-price containers (main method for modern Amazon pages)
+    const priceContainers = document.querySelectorAll('.a-price');
+    priceContainers.forEach(container => {
+      // Skip if already converted
+      if (container.dataset.timeForMoneyConverted === 'true') {
+        return;
+      }
+
+      // Try to extract price from this container
+      const priceElement = container.querySelector('.a-price-whole') || 
+                          container.querySelector('.a-offscreen') ||
+                          container;
+      const price = extractPriceFromStructured(priceElement);
+
+      if (price && price > 0) {
+        const hours = priceToHours(price);
+        if (hours) {
+          // Store original
+          container.dataset.timeForMoneyOriginal = container.textContent;
+          container.dataset.timeForMoneyPrice = price;
+          container.dataset.timeForMoneyConverted = 'true';
+          
+          // Hide the individual price parts
+          const symbolPart = container.querySelector('.a-price-symbol');
+          const wholePart = container.querySelector('.a-price-whole');
+          const fractionPart = container.querySelector('.a-price-fraction');
+          
+          if (symbolPart) symbolPart.style.display = 'none';
+          if (wholePart) wholePart.style.display = 'none';
+          if (fractionPart) fractionPart.style.display = 'none';
+          
+          // Create or update display with full format
+          let hoursContainer = container.querySelector('.time-for-money-display');
+          if (!hoursContainer) {
+            hoursContainer = document.createElement('span');
+            hoursContainer.className = 'time-for-money-display';
+            hoursContainer.style.display = 'inline-block';
+            hoursContainer.style.fontSize = 'inherit';
+            hoursContainer.style.lineHeight = 'inherit';
+            container.appendChild(hoursContainer);
+          }
+          
+          const formattedPrice = `$${price.toFixed(2)}`;
+          const formattedHours = formatHoursText(hours);
+          
+          // Create HTML with styled parts
+          hoursContainer.innerHTML = `
+            <strong style="color: #B12704; font-weight: 600;">${formattedHours}</strong>
+            <span style="color: #767676; font-size: 0.9em; margin-left: 4px;">(${formattedPrice})</span>
+          `;
+          
+          // Store text version for offscreen elements
+          const hoursText = `${formattedHours} (${formattedPrice})`;
+          
+          // Also update any .a-offscreen elements
+          const offscreenElements = container.querySelectorAll('.a-offscreen');
+          offscreenElements.forEach(offscreen => {
+            offscreen.textContent = hoursText;
+          });
+        }
+      }
+    });
+
+    // Also handle legacy price selectors (for older Amazon pages or special cases)
+    const legacySelectors = [
       '#priceblock_ourprice',
       '#priceblock_dealprice',
       '#priceblock_saleprice',
-      '.a-price-whole',
-      '.a-price .a-offscreen',
-      '[data-a-color="price"] .a-offscreen',
-      '#price',
-      '.a-price-range .a-offscreen',
-      '.a-price-symbol + .a-price-whole',
-      'span.a-price[data-a-color="base"] span.a-offscreen',
-      'span.a-price[data-a-color="price"] span.a-offscreen'
+      '#price'
     ];
 
-    priceSelectors.forEach(selector => {
+    legacySelectors.forEach(selector => {
       const elements = document.querySelectorAll(selector);
       elements.forEach(element => {
-        // Skip if already converted
-        if (element.dataset.timeForMoneyConverted === 'true') {
+        // Skip if already converted or if it's part of a .a-price container we already handled
+        if (element.dataset.timeForMoneyConverted === 'true' || 
+            element.closest('.a-price')?.dataset.timeForMoneyConverted === 'true') {
           return;
         }
 
@@ -74,36 +188,18 @@
         if (price && price > 0) {
           const hours = priceToHours(price);
           if (hours) {
-            // Store original price
             element.dataset.timeForMoneyOriginal = text;
             element.dataset.timeForMoneyPrice = price;
             element.dataset.timeForMoneyConverted = 'true';
 
-            // Replace with hours
-            const hoursText = `${hours} hours`;
+            const formattedPrice = `$${price.toFixed(2)}`;
+            const formattedHours = formatHoursText(hours);
+            const hoursText = `${formattedHours} (${formattedPrice})`;
             
-            // Handle different element types
-            if (element.classList.contains('a-offscreen')) {
-              // For screen reader text, update it
-              element.textContent = hoursText;
-            } else {
-              // For visible price elements
-              element.textContent = hoursText;
-              element.style.color = '#B12704'; // Amazon's price color
-            }
-
-            // Also update parent containers if needed
-            const parent = element.closest('.a-price');
-            if (parent) {
-              const wholePart = parent.querySelector('.a-price-whole');
-              const fractionPart = parent.querySelector('.a-price-fraction');
-              if (wholePart) {
-                wholePart.textContent = hours.split('.')[0];
-                if (fractionPart) {
-                  fractionPart.textContent = hours.split('.')[1] || '00';
-                }
-              }
-            }
+            element.innerHTML = `
+              <strong style="color: #B12704; font-weight: 600;">${formattedHours}</strong>
+              <span style="color: #767676; font-size: 0.9em; margin-left: 4px;">(${formattedPrice})</span>
+            `;
           }
         }
       });
@@ -137,7 +233,9 @@
           if (price > 0 && price < 100000) { // Reasonable price range
             const hours = priceToHours(price);
             if (hours) {
-              const hoursText = `${hours} hours`;
+              const formattedPrice = `$${price.toFixed(2)}`;
+              const formattedHours = formatHoursText(hours);
+              const hoursText = `${formattedHours} (${formattedPrice})`;
               node.textContent = text.replace(priceMatch[0], hoursText);
               node.parentElement.dataset.timeForMoneyConverted = 'true';
             }
